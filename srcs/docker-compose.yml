@@ -1,0 +1,65 @@
+services:
+  nginx:
+    build: requirements/nginx
+    ports:
+      - "8080:8080"
+    networks:
+      - localnet 
+    volumes:
+      - wordpress_source:/var/www/html
+
+  wordpress:
+    build: requirements/wordpress
+    environment:
+      MARIADB_HOST: mariadb
+      MARIADB_USER_NAME: liri
+      MARIADB_USER_DATABASE: wordpress
+      MARIADB_USER_PASSWORD_FILE: /run/secrets/db_password
+      WP_URL: http://localhost:8080
+      WP_TITLE: omghi
+      WP_ADMIN_USER: admin
+      WP_ADMIN_PASSWORD_FILE: /run/secrets/wp_admin_password
+      WP_ADMIN_EMAIL: admin@example.com
+      WP_USER: liri
+      WP_USER_PASSWORD_FILE: /run/secrets/wp_user_password
+      WP_USER_EMAIL: liri@example.com
+    volumes:
+      - wordpress_source:/var/www/html
+    secrets:
+      - db_password
+      - wp_admin_password
+      - wp_user_password
+    networks:
+      - localnet 
+    depends_on: 
+      - mariadb
+
+  mariadb:
+    build: requirements/mariadb
+    environment:
+      MARIADB_USER_NAME: liri
+      MARIADB_USER_DATABASE: wordpress
+      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MARIADB_USER_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+     - db_root_password
+     - db_password
+    networks:
+      - localnet 
+
+networks:
+  localnet:
+    driver: bridge
+
+volumes:
+  wordpress_source:
+
+secrets:
+   db_password:
+     file: ../secrets/db_password.txt
+   db_root_password:
+     file: ../secrets/db_root_password.txt
+   wp_admin_password:
+     file: ../secrets/wp_admin_password.txt
+   wp_user_password:
+     file: ../secrets/wp_user_password.txt
