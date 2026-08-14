@@ -35,4 +35,4 @@ EOF
 
 fi
 
-exec /usr/bin/mariadbd --user=mysql --skip-name-resolve --skip-networking=0 --bind-address=0.0.0.0
+exec /usr/bin/mariadbd --user=mysql --skip-networking=0 --bind-address=0.0.0.0

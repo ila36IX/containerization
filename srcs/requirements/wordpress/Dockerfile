@@ -18,20 +18,21 @@ RUN apk update && apk add --no-cache \
     tar \
     mariadb-client
 
+
 RUN ln -s /usr/bin/php84 /usr/bin/php
 
-RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp && \
-    chmod +x /usr/local/bin/wp
-
-# RUN mkdir -p /var/www/html && \
-RUN mkdir -p /var/www/html && \
-    php -d memory_limit=512M /usr/local/bin/wp core download --path=/var/www/html --allow-root
+RUN mkdir -p /var/www/html
 
 RUN chown -R nobody:nobody /var/www/html
 
-COPY ./tools/run.sh /run.sh
-RUN chmod +x /run.sh
+RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -O /usr/local/bin/wp
 
-WORKDIR /var/www/html
+RUN chmod +x /usr/local/bin/wp
 
-ENTRYPOINT ["/run.sh"]
+RUN php -d memory_limit=512M /usr/local/bin/wp core download --path=/var/www/html --allow-root
+
+COPY ./tools/wordpress_entry.sh /wordpress_entry.sh
+
+RUN chmod +x /wordpress_entry.sh
+
+ENTRYPOINT ["/wordpress_entry.sh"]
