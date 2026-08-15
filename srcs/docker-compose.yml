@@ -8,6 +8,12 @@ services:
       - localnet
     volumes:
       - wordpress_source:/var/www/html
+    environment:
+      FTP_PASSWORD_FILE: /run/secrets/ftp_password
+      FTP_DIRECTORY: /var/www/html
+      FTP_USERNAME: liri
+    secrets:
+     - ftp_password
 
   nginx:
     build: requirements/nginx
@@ -18,6 +24,16 @@ services:
     volumes:
       - wordpress_source:/var/www/html
     depends_on:
+      - wordpress
+
+  adminer:
+    build: requirements/bonus/adminer
+    volumes:
+      - wordpress_source:/var/www/html
+    networks:
+      - localnet
+    depends_on:
+      - mariadb
       - wordpress
 
   wordpress:
@@ -42,8 +58,8 @@ services:
       - wp_admin_password
       - wp_user_password
     networks:
-      - localnet 
-    depends_on: 
+      - localnet
+    depends_on:
       - mariadb
 
   redis:
@@ -80,3 +96,5 @@ secrets:
      file: ../secrets/wp_admin_password.txt
    wp_user_password:
      file: ../secrets/wp_user_password.txt
+   ftp_password:
+     file: ../secrets/ftp_password.txt

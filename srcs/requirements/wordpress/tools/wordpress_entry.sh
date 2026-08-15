@@ -39,10 +39,10 @@ if [ ! -f "/var/www/html/wp-config.php" ]; then
 		--role=author;
 
 	# Redis setup: https://github.com/rhubarbgroup/redis-cache/blob/develop/INSTALL.md
-	wp-cli config set WP_REDIS_HOST "redis" --path="/var/www/html"
-	wp-cli config set WP_REDIS_PORT "6379" --path="/var/www/html"
-	wp-cli plugin install redis-cache --path="/var/www/html" --activate
-	wp-cli redis enable --path="/var/www/html"
+	wp-cli config set WP_REDIS_HOST "redis"
+	wp-cli config set WP_REDIS_PORT "6379"
+	wp-cli plugin install redis-cache --activate
+	wp-cli redis enable
 fi
 
 exec /usr/sbin/php-fpm84 -F

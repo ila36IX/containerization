@@ -1,12 +1,12 @@
 #!/bin/sh
 set -e
 
-FTP_USERNAME="ftpadmin"
-FTP_PASSWORD="!@#"
-FTP_DIRECTORY="/var/www/html"
+FTP_PASSWORD="$(cat $FTP_PASSWORD_FILE)"
 
+if ! id "$FTP_USERNAME" >/dev/null 2>&1; then
+    adduser -h "$FTP_DIRECTORY" -s /sbin/nologin -D "$FTP_USERNAME"
+fi
 
-adduser -h "$FTP_DIRECTORY" -s /sbin/nologin -D "$FTP_USERNAME"
 echo "$FTP_USERNAME:$FTP_PASSWORD" | chpasswd
 
 usermod -d $FTP_DIRECTORY -s /sbin/nologin nobody
