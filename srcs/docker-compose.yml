@@ -1,12 +1,24 @@
 services:
+  ftp:
+    build: requirements/bonus/ftp
+    ports:
+      - "9090:21"
+      - "21000-21010:21000-21010"
+    networks:
+      - localnet
+    volumes:
+      - wordpress_source:/var/www/html
+
   nginx:
     build: requirements/nginx
     ports:
       - "8080:80"
     networks:
-      - localnet 
+      - localnet
     volumes:
       - wordpress_source:/var/www/html
+    depends_on:
+      - wordpress
 
   wordpress:
     build: requirements/wordpress
@@ -16,10 +28,10 @@ services:
       MARIADB_USER_DATABASE: wordpress
       MARIADB_USER_PASSWORD_FILE: /run/secrets/db_password
       WP_URL: http://localhost:8080
-      WP_TITLE: omghi
-      WP_ADMIN_USER: admin
+      WP_TITLE: Wordpress
+      WP_ADMIN_USER: root
       WP_ADMIN_PASSWORD_FILE: /run/secrets/wp_admin_password
-      WP_ADMIN_EMAIL: admin@example.com
+      WP_ADMIN_EMAIL: root@example.com
       WP_USER: liri
       WP_USER_PASSWORD_FILE: /run/secrets/wp_user_password
       WP_USER_EMAIL: liri@example.com
@@ -33,6 +45,11 @@ services:
       - localnet 
     depends_on: 
       - mariadb
+
+  redis:
+    build: requirements/bonus/redis
+    networks:
+      - localnet 
 
   mariadb:
     build: requirements/mariadb
