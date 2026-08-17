@@ -26,6 +26,11 @@ services:
     depends_on:
       - wordpress
 
+  resume:
+    build: requirements/bonus/resume
+    networks:
+      - localnet
+
   adminer:
     build: requirements/bonus/adminer
     volumes:
