@@ -91,10 +91,8 @@ services:
     environment:
       MARIADB_USER_NAME: liri
       MARIADB_USER_DATABASE: wordpress
-      MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
       MARIADB_USER_PASSWORD_FILE: /run/secrets/db_password
     secrets:
-     - db_root_password
      - db_password
     networks:
       - localnet 
@@ -110,8 +108,6 @@ volumes:
 secrets:
    db_password:
      file: ../secrets/db_password.txt
-   db_root_password:
-     file: ../secrets/db_root_password.txt
    wp_admin_password:
      file: ../secrets/wp_admin_password.txt
    wp_user_password:
