@@ -23,8 +23,22 @@ services:
       - localnet
     volumes:
       - wordpress_source:/var/www/html
+      - nginx_logs:/var/log/nginx
     depends_on:
       - wordpress
+
+  goaccess:
+    build: requirements/bonus/goaccess
+    ports:
+      - "9191:80" # Web Interface
+      - "7890:7890" # WebSocket for real-time updates
+    networks:
+      - localnet
+    volumes:
+      - nginx_logs:/var/log/nginx:ro
+      - wordpress_source:/var/www/html
+    depends_on:
+      - nginx
 
   resume:
     build: requirements/bonus/resume
@@ -91,6 +105,7 @@ networks:
 
 volumes:
   wordpress_source:
+  nginx_logs:
 
 secrets:
    db_password:
