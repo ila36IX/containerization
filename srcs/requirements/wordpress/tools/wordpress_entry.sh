@@ -1,46 +1,46 @@
 #!/bin/sh
 set -e
 
-MARIADB_USER_PASSWORD=$(cat "${MARIADB_USER_PASSWORD_FILE}")
-WP_ADMIN_PASSWORD=$(cat "${WP_ADMIN_PASSWORD_FILE}")
-WP_USER_PASSWORD=$(cat "${WP_USER_PASSWORD_FILE}")
+MARIADB_PASSWORD=$(cat "/run/secrets/db_password")
+WORDPRESS_ADMIN_PASSWORD=$(cat "/run/secrets/wp_admin_password")
+WORDPRESS_AUTHER_PASSWORD=$(cat "/run/secrets/wp_auther_password")
 
 chown nobody:nobody /var/www/html
 
 wp-cli() {
 	# NOTE: https://make.wordpress.org/cli/handbook/references/config/#environment-variables
 	WP_CLI_CACHE_DIR=/tmp/.wp-cli-cache \
-		su-exec nobody /usr/local/bin/wp --path="/var/www/html" "$@";
+		su-exec nobody /usr/local/bin/wp --path="$WORDPRESS_PATH" "$@";
 }
+echo "This part???";
 
 if [ ! -f "/var/www/html/wp-config.php" ]; then
-	while ! mariadb-admin ping -h"${MARIADB_HOST}" -u"${MARIADB_USER_NAME}" -p"${MARIADB_USER_PASSWORD}" --silent; do
+	while ! mariadb-admin ping -h"${MARIADB_HOST}" -u"${MARIADB_USER_NAME}" -p"${MARIADB_PASSWORD}" --silent; do
 		sleep 2
 	done
 
 	wp-cli  config create \
-		--dbname="${MARIADB_USER_DATABASE}" \
+		--dbname="${MARIADB_DATABASE_NAME}" \
 		--dbuser="${MARIADB_USER_NAME}" \
-		--dbpass="${MARIADB_USER_PASSWORD}" \
+		--dbpass="${MARIADB_PASSWORD}" \
 		--dbhost="${MARIADB_HOST}";
 
-
 	wp-cli core install \
-		--url="${WP_URL}" \
-		--title="${WP_TITLE}" \
-		--admin_user="${WP_ADMIN_USER}" \
-		--admin_password="${WP_ADMIN_PASSWORD}" \
-		--admin_email="${WP_ADMIN_EMAIL}";
+		--url="${WORDPRESS_URL}" \
+		--title="${WORDPRESS_TITLE}" \
+		--admin_user="${WORDPRESS_ADMIN_USER_NAME}" \
+		--admin_password="${WORDPRESS_ADMIN_PASSWORD}" \
+		--admin_email="${WORDPRESS_ADMIN_EMAIL}";
 
 	wp-cli user create \
-		"${WP_USER}" \
-		"${WP_USER_EMAIL}" \
-		--user_pass="${WP_USER_PASSWORD}" \
+		"${WORDPRESS_AUTHER_NAME}" \
+		"${WORDPRESS_AUTHER_EMAIL}" \
+		--user_pass="${WORDPRESS_AUTHER_PASSWORD}" \
 		--role=author;
 
 	# Redis setup: https://github.com/rhubarbgroup/redis-cache/blob/develop/INSTALL.md
-	wp-cli config set WP_REDIS_HOST "redis"
-	wp-cli config set WP_REDIS_PORT "6379"
+	wp-cli config set WP_REDIS_HOST "$REDIS_HOST"
+	wp-cli config set WP_REDIS_PORT "$REDIS_PORT"
 	wp-cli plugin install redis-cache --activate
 	wp-cli redis enable
 fi

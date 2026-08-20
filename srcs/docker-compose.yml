@@ -7,10 +7,10 @@ services:
     networks:
       - localnet
     volumes:
-      - wordpress_source:/var/www/html
+      - wordpress_source:${VOLUME_GUEST_PATH}
     environment:
       FTP_PASSWORD_FILE: /run/secrets/ftp_password
-      FTP_DIRECTORY: /var/www/html
+      FTP_DIRECTORY: ${VOLUME_GUEST_PATH}
       FTP_USERNAME: liri
     secrets:
      - ftp_password
@@ -22,7 +22,7 @@ services:
     networks:
       - localnet
     volumes:
-      - wordpress_source:/var/www/html
+      - wordpress_source:${VOLUME_GUEST_PATH}
       - nginx_logs:/var/log/nginx
     depends_on:
       - wordpress
@@ -30,15 +30,16 @@ services:
   goaccess:
     build: requirements/bonus/goaccess
     ports:
-      - "9191:80" # Web Interface
-      - "7890:7890" # WebSocket for real-time updates
+      - "9191:80"
+      - "7890:7890"
     networks:
       - localnet
     volumes:
       - nginx_logs:/var/log/nginx:ro
-      - wordpress_source:/var/www/html
+      - wordpress_source:${VOLUME_GUEST_PATH}
     depends_on:
       - nginx
+      - wordpress
 
   resume:
     build: requirements/bonus/resume
@@ -48,7 +49,7 @@ services:
   adminer:
     build: requirements/bonus/adminer
     volumes:
-      - wordpress_source:/var/www/html
+      - wordpress_source:${VOLUME_GUEST_PATH}
     networks:
       - localnet
     depends_on:
@@ -57,25 +58,13 @@ services:
 
   wordpress:
     build: requirements/wordpress
-    environment:
-      MARIADB_HOST: mariadb
-      MARIADB_USER_NAME: liri
-      MARIADB_USER_DATABASE: wordpress
-      MARIADB_USER_PASSWORD_FILE: /run/secrets/db_password
-      WP_URL: http://localhost:8080
-      WP_TITLE: Wordpress
-      WP_ADMIN_USER: root
-      WP_ADMIN_PASSWORD_FILE: /run/secrets/wp_admin_password
-      WP_ADMIN_EMAIL: root@example.com
-      WP_USER: liri
-      WP_USER_PASSWORD_FILE: /run/secrets/wp_user_password
-      WP_USER_EMAIL: liri@example.com
+    env_file: .env
     volumes:
-      - wordpress_source:/var/www/html
+      - wordpress_source:${VOLUME_GUEST_PATH}
     secrets:
       - db_password
       - wp_admin_password
-      - wp_user_password
+      - wp_auther_password
     networks:
       - localnet
     depends_on:
@@ -88,14 +77,11 @@ services:
 
   mariadb:
     build: requirements/mariadb
-    environment:
-      MARIADB_USER_NAME: liri
-      MARIADB_USER_DATABASE: wordpress
-      MARIADB_USER_PASSWORD_FILE: /run/secrets/db_password
     secrets:
      - db_password
     networks:
       - localnet 
+    env_file: .env
 
 networks:
   localnet:
@@ -104,13 +90,12 @@ networks:
 volumes:
   wordpress_source:
   nginx_logs:
-
 secrets:
    db_password:
      file: ../secrets/db_password.txt
    wp_admin_password:
      file: ../secrets/wp_admin_password.txt
-   wp_user_password:
+   wp_auther_password:
      file: ../secrets/wp_user_password.txt
    ftp_password:
      file: ../secrets/ftp_password.txt
