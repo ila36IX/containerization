@@ -5,7 +5,7 @@ MARIADB_PASSWORD=$(cat "/run/secrets/db_password")
 WORDPRESS_ADMIN_PASSWORD=$(cat "/run/secrets/wp_admin_password")
 WORDPRESS_AUTHER_PASSWORD=$(cat "/run/secrets/wp_auther_password")
 
-chown nobody:nobody /var/www/html
+chown nobody:nobody "${WORDPRESS_PATH}"
 
 wp-cli() {
 	# NOTE: https://make.wordpress.org/cli/handbook/references/config/#environment-variables
@@ -14,7 +14,7 @@ wp-cli() {
 }
 echo "This part???";
 
-if [ ! -f "/var/www/html/wp-config.php" ]; then
+if [ ! -f "${WORDPRESS_PATH}/wp-config.php" ]; then
 	while ! mariadb-admin ping -h"${MARIADB_HOST}" -u"${MARIADB_USER_NAME}" -p"${MARIADB_PASSWORD}" --silent; do
 		sleep 2
 	done

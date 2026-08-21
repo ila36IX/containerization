@@ -24,6 +24,7 @@ services:
     volumes:
       - wordpress_source:${VOLUME_GUEST_PATH}
       - nginx_logs:/var/log/nginx
+    env_file: .env
     depends_on:
       - wordpress
 
@@ -57,7 +58,10 @@ services:
       - wordpress
 
   wordpress:
-    build: requirements/wordpress
+    build:
+      context: requirements/wordpress
+      args:
+        - WORDPRESS_PATH=${WORDPRESS_PATH}
     env_file: .env
     volumes:
       - wordpress_source:${VOLUME_GUEST_PATH}
