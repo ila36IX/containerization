@@ -7,10 +7,10 @@ services:
     networks:
       - localnet
     volumes:
-      - wordpress_source:${VOLUME_GUEST_PATH}
+      - wordpress_source:${WP_DATA_CONTAINER}
     environment:
       FTP_PASSWORD_FILE: /run/secrets/ftp_password
-      FTP_DIRECTORY: ${VOLUME_GUEST_PATH}
+      FTP_DIRECTORY: ${WP_DATA_CONTAINER}
       FTP_USERNAME: liri
     secrets:
      - ftp_password
@@ -22,7 +22,7 @@ services:
     networks:
       - localnet
     volumes:
-      - wordpress_source:${VOLUME_GUEST_PATH}
+      - wordpress_source:${WP_DATA_CONTAINER}
       - nginx_logs:/var/log/nginx
     env_file: .env
     depends_on:
@@ -37,7 +37,7 @@ services:
       - localnet
     volumes:
       - nginx_logs:/var/log/nginx:ro
-      - wordpress_source:${VOLUME_GUEST_PATH}
+      - wordpress_source:${WP_DATA_CONTAINER}
     depends_on:
       - nginx
       - wordpress
@@ -50,7 +50,7 @@ services:
   adminer:
     build: requirements/bonus/adminer
     volumes:
-      - wordpress_source:${VOLUME_GUEST_PATH}
+      - wordpress_source:${WP_DATA_CONTAINER}
     networks:
       - localnet
     depends_on:
@@ -64,7 +64,7 @@ services:
         - WORDPRESS_PATH=${WORDPRESS_PATH}
     env_file: .env
     volumes:
-      - wordpress_source:${VOLUME_GUEST_PATH}
+      - wordpress_source:${WP_DATA_CONTAINER}
     secrets:
       - db_password
       - wp_admin_password
