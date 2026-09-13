@@ -1,24 +1,10 @@
 services:
-  ftp:
-    build: requirements/bonus/ftp
-    ports:
-      - "9090:21"
-      - "21000-21010:21000-21010"
-    networks:
-      - localnet
-    volumes:
-      - wordpress_source:${WP_DATA_CONTAINER}
-    environment:
-      FTP_PASSWORD_FILE: /run/secrets/ftp_password
-      FTP_DIRECTORY: ${WP_DATA_CONTAINER}
-      FTP_USERNAME: liri
-    secrets:
-     - ftp_password
-
   nginx:
+    restart: always
     build: requirements/nginx
+    image: nginx
     ports:
-      - "8080:80"
+      - "8080:443"
     networks:
       - localnet
     volumes:
@@ -28,40 +14,13 @@ services:
     depends_on:
       - wordpress
 
-  goaccess:
-    build: requirements/bonus/goaccess
-    ports:
-      - "9191:80"
-      - "7890:7890"
-    networks:
-      - localnet
-    volumes:
-      - nginx_logs:/var/log/nginx:ro
-      - wordpress_source:${WP_DATA_CONTAINER}
-    depends_on:
-      - nginx
-      - wordpress
-
-  resume:
-    build: requirements/bonus/resume
-    networks:
-      - localnet
-
-  adminer:
-    build: requirements/bonus/adminer
-    volumes:
-      - wordpress_source:${WP_DATA_CONTAINER}
-    networks:
-      - localnet
-    depends_on:
-      - mariadb
-      - wordpress
-
   wordpress:
+    restart: always
     build:
       context: requirements/wordpress
       args:
         - WORDPRESS_PATH=${WORDPRESS_PATH}
+    image: wordpress
     env_file: .env
     volumes:
       - wordpress_source:${WP_DATA_CONTAINER}
@@ -73,19 +32,69 @@ services:
       - localnet
     depends_on:
       - mariadb
-
-  redis:
-    build: requirements/bonus/redis
-    networks:
-      - localnet 
+      - redis
 
   mariadb:
+    restart: always
     build: requirements/mariadb
+    image: mariadb
     secrets:
      - db_password
     networks:
-      - localnet 
+      - localnet
     env_file: .env
+
+  # ------------------------------- Bonus -------------------------------
+
+  ftp:
+    restart: always
+    image: ftp
+    build: requirements/bonus/ftp
+    ports:
+      - "9090:21"
+      - "21000-21010:21000-21010"
+    networks:
+      - localnet
+    volumes:
+      - wordpress_source:${WP_DATA_CONTAINER}
+    env_file: .env
+    secrets:
+     - ftp_password
+
+  # portainer:
+  #   build: ./requirements/bonus/portainer
+  #   image: portainer
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   networks:
+  #     - localnet
+  #   restart: always
+
+  game:
+    restart: always
+    image: game
+    build: requirements/bonus/game
+    networks:
+      - localnet
+
+  adminer:
+    restart: always
+    image: adminer
+    build: requirements/bonus/adminer
+    volumes:
+      - wordpress_source:${WP_DATA_CONTAINER}
+    networks:
+      - localnet
+    depends_on:
+      - mariadb
+      - wordpress
+
+  redis:
+    restart: always
+    image: redis
+    build: requirements/bonus/redis
+    networks:
+      - localnet 
 
 networks:
   localnet:
@@ -93,7 +102,7 @@ networks:
 
 volumes:
   wordpress_source:
-  nginx_logs:
+
 secrets:
    db_password:
      file: ../secrets/db_password.txt
