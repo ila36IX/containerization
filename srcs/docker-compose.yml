@@ -4,12 +4,11 @@ services:
     build: requirements/nginx
     image: nginx
     ports:
-      - "8080:443"
+      - "443:443"
     networks:
       - localnet
     volumes:
       - wordpress_source:${WP_DATA_CONTAINER}
-      - nginx_logs:/var/log/nginx
     env_file: .env
     depends_on:
       - wordpress
@@ -42,6 +41,8 @@ services:
      - db_password
     networks:
       - localnet
+    volumes:
+      - DB:/var/lib/mysql
     env_file: .env
 
   # ------------------------------- Bonus -------------------------------
@@ -51,7 +52,7 @@ services:
     image: ftp
     build: requirements/bonus/ftp
     ports:
-      - "9090:21"
+      - "21:21"
       - "21000-21010:21000-21010"
     networks:
       - localnet
@@ -61,14 +62,14 @@ services:
     secrets:
      - ftp_password
 
-  # portainer:
-  #   build: ./requirements/bonus/portainer
-  #   image: portainer
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock
-  #   networks:
-  #     - localnet
-  #   restart: always
+  portainer:
+    build: ./requirements/bonus/portainer
+    image: portainer
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - localnet
+    restart: always
 
   game:
     restart: always
@@ -102,6 +103,17 @@ networks:
 
 volumes:
   wordpress_source:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/aljbari/data/wordpress
+  DB:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: /home/aljbari/data/db
 
 secrets:
    db_password:
