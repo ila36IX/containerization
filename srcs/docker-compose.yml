@@ -1,7 +1,10 @@
 services:
   nginx:
     restart: always
-    build: requirements/nginx
+    build: 
+      context: requirements/nginx
+      args:
+        - DOMAIN_NAME=${DOMAIN_NAME}
     image: nginx
     ports:
       - "443:443"
@@ -10,8 +13,6 @@ services:
     volumes:
       - wordpress_source:${WP_DATA_CONTAINER}
     env_file: .env
-    args:
-        - DOMAIN_NAME=${DOMAIN_NAME}
     depends_on:
       - wordpress
 

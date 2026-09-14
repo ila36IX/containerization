@@ -7,4 +7,4 @@ ADD https://github.com/portainer/portainer/releases/download/2.27.6/portainer-2.
 RUN mkdir /portainer
 RUN tar -xvf portainer.tar.gz -C /portainer --strip-components=1
 
-CMD ["/portainer/portainer", "--admin-password-timeout", "200m"]
+CMD ["/portainer/portainer"]
