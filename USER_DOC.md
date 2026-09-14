@@ -17,15 +17,15 @@ Instructions for running and accessing the Inception services.
 
 * **Start:** `make`
 * **Stop:** `make down`
-* **Reset & wipe data:** `make clean`
+* **Reset:** `make clean`
 
 ## Service URLs
 
 * **Website:** https://aljbari.42.fr
 * **WordPress Admin:** https://aljbari.42.fr/wp-admin/
-* **Static Site:** http://aljbari.42.fr/game
-* **Adminer:** http://aljbari.42.fr/adminer
-* **Portainer:** http://aljbari.42.fr/portainer
+* **Static Site:** https://aljbari.42.fr/game
+* **Adminer:** https://aljbari.42.fr/adminer
+* **Portainer:** https://aljbari.42.fr/portainer
 * **FTP:** `ftp -p liri@aljbari.42.fr` (port `21`)
 
 ## Credentials

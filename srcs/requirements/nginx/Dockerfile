@@ -4,8 +4,11 @@ RUN apk update && apk add --no-cache nginx openssl
 
 COPY conf/default.conf /etc/nginx/http.d/default.conf
 
-# RUN ln -sf /dev/stdout /var/log/nginx/access.log
-# RUN ln -sf /dev/stderr /var/log/nginx/error.log
+RUN ln -sf /dev/stdout /var/log/nginx/access.log
+RUN ln -sf /dev/stderr /var/log/nginx/error.log
+
+ARG DOMAIN_NAME
+ENV DOMAIN_NAME=${DOMAIN_NAME}
 
 RUN mkdir -p /etc/nginx/ssl
 

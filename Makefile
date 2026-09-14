@@ -18,6 +18,7 @@ fclean: clean
 	- docker rmi -f `docker images -qa` 2>/dev/null
 	- docker volume rm `docker volume ls -q` 2>/dev/null
 
-re: fclean up
+re: fclean
 	rm -rf $(DB_DATA_DIR)
 	rm -rf $(WP_DATA_DIR)
+	$(MAKE) up

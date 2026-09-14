@@ -24,7 +24,7 @@ Make sure Docker and Docker Compose are installed.
 
 ## Build and Run
 
-Services run on the `localnext` bridge and restart automatically if they crash.
+Services run on the `localnet` bridge and restart automatically if they crash.
 
 * Start the stack with `make`.
 
@@ -39,5 +39,5 @@ Services run on the `localnext` bridge and restart automatically if they crash.
 
 Data is kept safe across container restarts using bind-mounted volumes:
 
-* **`db_data`:** Mounts `/home/aljbari/data/db` to `/var/lib/mysql` in `mariadb`.
-* **`wp_data`:** Mounts `/home/aljbari/data/wordpress` to `/var/www/wordpress` across `wordpress`, `nginx`, and `ftp`.
+* **`DB`:** Mounts `/home/aljbari/data/db` to `/var/lib/mysql` in `mariadb`.
+* **`wordpress_source`:** Mounts `/home/aljbari/data/wordpress` to `/var/www/html` across `wordpress`, `nginx`, and `ftp`.

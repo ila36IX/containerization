@@ -10,6 +10,8 @@ services:
     volumes:
       - wordpress_source:${WP_DATA_CONTAINER}
     env_file: .env
+    args:
+        - DOMAIN_NAME=${DOMAIN_NAME}
     depends_on:
       - wordpress
 
@@ -88,7 +90,6 @@ services:
       - localnet
     depends_on:
       - mariadb
-      - wordpress
 
   redis:
     restart: always

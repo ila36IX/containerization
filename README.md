@@ -1,4 +1,4 @@
-This project has been created as part of the 42 curriculum by aljbari.
+*This project has been created as part of the 42 curriculum by aljbari.*
 
 # Description
 
@@ -29,7 +29,7 @@ A bridge **Docker Network** isolates containers into their own virtual network, 
 - [Containers From Scratch • Liz Rice • GOTO 2018](https://www.youtube.com/watch?v=8fi7uSYlOdc)
 - [Documentation/cgroup-v1/cpusets.txt](https://www.kernel.org/doc/Documentation/cgroup-v1/cgroups.txt)
 
-# AI Usage
+## AI Usage
 
 - Debugging and investigating problems
 - Used as a Search engine
