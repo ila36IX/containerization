@@ -12,11 +12,12 @@ down:
 
 clean:
 	docker image prune -f
-	docker compose -f ./srcs/docker-compose.yml down --rmi local --volumes
+	docker compose -f $(COMPOSE_PATH) down --rmi local --volumes
 
 fclean: clean
 	- docker rmi -f `docker images -qa` 2>/dev/null
 	- docker volume rm `docker volume ls -q` 2>/dev/null
 
 re: fclean up
-
+	rm -rf $(DB_DATA_DIR)
+	rm -rf $(WP_DATA_DIR)
